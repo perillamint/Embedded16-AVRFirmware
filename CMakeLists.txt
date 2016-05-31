@@ -80,4 +80,6 @@ add_definitions("-c")
 # include_directories(libatomthreads)
 
 add_subdirectory(libatomthreads)
+
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR})
 add_subdirectory(src)
