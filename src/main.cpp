@@ -11,6 +11,7 @@
 //iPot headers
 #include "system_tick.h"
 #include "constants.h"
+#include "util.h"
 
 /* Local data */
 
@@ -75,7 +76,7 @@ static void main_thread_func(uint32_t data)
     {
       PORTB ^= 0xFF;
       //_delay_ms(500);
-      atomTimerDelay(SYSTICKS_PER_SEC / 2);
+      //PORTB = msec_to_ticks(500);
+      atomTimerDelay(msec_to_ticks(500));
     }
-    
 }
