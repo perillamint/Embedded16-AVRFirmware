@@ -11,14 +11,13 @@ void init_system_tick(void)
   OCR0A = (F_CPU / 1024 / SYSTICKS_PER_SEC);
 
   //Enable compare-match interrupt.
-#ifdef TIMSK
-  TIMSK = _BV(OCIE0A);
-#else
   TIMSK0 = _BV(OCIE0A);
-#endif
 
-  //Set prescaler: 1024
-  TCCR0B = _BV(CS00) | _BV(CS02) | _BV(WGM02);
+  //Timer0 CTC mode, prescaler = 1024
+  TCCR0A = _BV(WGM01);
+  TCCR0B = _BV(CS00) | _BV(CS02);
+
+  sei();
 }
 
 //Atom scheduler ISR.
