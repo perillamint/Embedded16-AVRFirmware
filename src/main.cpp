@@ -1,4 +1,5 @@
 #include <inttypes.h>
+#include <stdio.h>
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -11,6 +12,7 @@
 //iPot headers
 #include "system_tick.h"
 #include "constants.h"
+#include "uart.h"
 #include "util.h"
 
 /* Local data */
@@ -33,6 +35,13 @@ static void main_thread_func (uint32_t data);
 
 int main()
 {
+  //Initialize UART.
+  if (uart_init(115200) != 0)
+    {
+      //Uh-oh.
+      //TODO: Blink ERROR LED.
+    }
+
   //Initialize RTOS.
   int8_t status;
   
@@ -71,10 +80,13 @@ static void main_thread_func(uint32_t data)
 
   DDRB = 0xFF;
   PORTB = 0x00;
-  
+
+  int cnt = 0;
   for(;;)
     {
+      cnt++;
       PORTB ^= 0xFF;
+      printf_P(PSTR("Hello, thread! count = %d\n"), cnt);
       atomTimerDelay(msec_to_ticks(500));
     }
 }
