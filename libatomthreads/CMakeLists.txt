@@ -12,6 +12,5 @@ add_avr_library(
    libatomthreads
    ${libatomthreads_SOURCES}
    atomthreads/ports/avr/atomport.c
-   atomthreads/ports/avr/uart.c
    atomthreads/ports/avr/atomport-asm.s
 )
