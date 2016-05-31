@@ -75,8 +75,6 @@ static void main_thread_func(uint32_t data)
   for(;;)
     {
       PORTB ^= 0xFF;
-      //_delay_ms(500);
-      //PORTB = msec_to_ticks(500);
       atomTimerDelay(msec_to_ticks(500));
     }
 }
