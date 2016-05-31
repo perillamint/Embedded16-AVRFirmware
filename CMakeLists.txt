@@ -74,10 +74,10 @@ add_definitions("-funsigned-char")
 add_definitions("-funsigned-bitfields")
 add_definitions("-ffunction-sections")
 add_definitions("-c")
-add_definitions("-std=gnu99")
+#add_definitions("-std=gnu99")
 
 # TODO: Complete libatomthreads.
 # include_directories(libatomthreads)
 
 add_subdirectory(libatomthreads)
-
+add_subdirectory(src)
