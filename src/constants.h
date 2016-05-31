@@ -46,6 +46,6 @@
 #define DEFAULT_THREAD_PRIO 16
 
 //System tick
-#define SYSTICKS_PER_SEC 100
+#define SYSTICKS_PER_SEC 128
 
 #endif
