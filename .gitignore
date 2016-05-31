@@ -33,3 +33,8 @@
 
 # Build dir.
 build/
+
+#Editor temp files
+*~
+\#*\#
+.\#*
