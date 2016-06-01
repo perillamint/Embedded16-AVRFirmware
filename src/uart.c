@@ -124,8 +124,19 @@ int uart_putchar(char c, FILE *stream)
   return 0;
 }
 
+//TODO: Think better way to do I/O.
+//I/O thread?
 int uart_getchar(FILE *stream)
 {
-  //TODO: Impl uart getchar.
-  return 0;
+  char ret = 0;
+
+  if (atomMutexGet(&uart_mutex, 0) == ATOM_OK)
+    {
+      loop_until_bit_is_set(REG_UCSRA, RXC0);
+      ret = REG_UDR;
+
+      atomMutexPut(&uart_mutex);
+    }
+
+  return ret;
 }
