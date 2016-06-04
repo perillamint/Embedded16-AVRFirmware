@@ -7,6 +7,7 @@ extern "C" {
 
   int msec_to_ticks(int msec);
   void atom_delay_ms(int msec);
+  int atom_err_to_errno(uint8_t status);
 
 #ifdef __cplusplus
 }

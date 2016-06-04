@@ -15,3 +15,9 @@ void atom_delay_ms(int msec)
 {
   atomTimerDelay(msec_to_ticks(msec));
 }
+
+int atom_err_to_errno(uint8_t status)
+{
+  //TODO: impl this.
+  return status;
+}
