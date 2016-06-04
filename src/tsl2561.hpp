@@ -116,7 +116,7 @@ tsl2561IntegrationTime_t;
 
 typedef enum
 {
-  TSL2561_GAIN_0X                   = 0x00,    // No gain
+  TSL2561_GAIN_1X                   = 0x00,    // No gain
   TSL2561_GAIN_16X                  = 0x10,    // 16x gain
 }
 tsl2561Gain_t;
@@ -139,9 +139,9 @@ public:
   int disable();
   int set_gain(tsl2561Gain_t gain);
   int set_timing(tsl2561IntegrationTime_t integration);
-  int get_full_luminosity(uint32_t *result);
-  int get_luminosity(uint8_t channel, uint16_t *result);
-  //
+  int get_raw_full_luminosity(uint32_t *result);
+  int get_raw_luminosity(uint8_t channel, uint16_t *result);
+  int get_luminosity(uint32_t *result);
 };
 
 #endif
