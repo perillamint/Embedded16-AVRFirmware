@@ -28,8 +28,8 @@
 #define TSL2561_WORD_BIT          (0x20)    // 1 = read/write word (rather than byte)
 #define TSL2561_BLOCK_BIT         (0x10)    // 1 = using block read/write
 
-#define TSL2561_CONTROL_POWERON   (0x03)
-#define TSL2561_CONTROL_POWEROFF  (0x00)
+#define TSL2561_CTRL_POWERON   (0x03)
+#define TSL2561_CTRL_POWEROFF  (0x00)
 
 #define TSL2561_LUX_LUXSCALE      (14)      // Scale by 2^14
 #define TSL2561_LUX_RATIOSCALE    (9)       // Scale ratio by 2^9
@@ -91,19 +91,19 @@
 
 enum
 {
-  TSL2561_REGISTER_CONTROL          = 0x00,
-  TSL2561_REGISTER_TIMING           = 0x01,
-  TSL2561_REGISTER_THRESHHOLDL_LOW  = 0x02,
-  TSL2561_REGISTER_THRESHHOLDL_HIGH = 0x03,
-  TSL2561_REGISTER_THRESHHOLDH_LOW  = 0x04,
-  TSL2561_REGISTER_THRESHHOLDH_HIGH = 0x05,
-  TSL2561_REGISTER_INTERRUPT        = 0x06,
-  TSL2561_REGISTER_CRC              = 0x08,
-  TSL2561_REGISTER_ID               = 0x0A,
-  TSL2561_REGISTER_CHAN0_LOW        = 0x0C,
-  TSL2561_REGISTER_CHAN0_HIGH       = 0x0D,
-  TSL2561_REGISTER_CHAN1_LOW        = 0x0E,
-  TSL2561_REGISTER_CHAN1_HIGH       = 0x0F
+  TSL2561_REG_CONTROL          = 0x00,
+  TSL2561_REG_TIMING           = 0x01,
+  TSL2561_REG_THRESHHOLDL_LOW  = 0x02,
+  TSL2561_REG_THRESHHOLDL_HIGH = 0x03,
+  TSL2561_REG_THRESHHOLDH_LOW  = 0x04,
+  TSL2561_REG_THRESHHOLDH_HIGH = 0x05,
+  TSL2561_REG_INTERRUPT        = 0x06,
+  TSL2561_REG_CRC              = 0x08,
+  TSL2561_REG_ID               = 0x0A,
+  TSL2561_REG_CH0_LOW        = 0x0C,
+  TSL2561_REG_CH0_HIGH       = 0x0D,
+  TSL2561_REG_CH1_LOW        = 0x0E,
+  TSL2561_REG_CH1_HIGH       = 0x0F
 };
 
 typedef enum
@@ -125,10 +125,23 @@ class TSL2561
 {
 private:
   char addr;
+  bool initialized;
+  bool sleeping;
+  tsl2561IntegrationTime_t integration;
+  tsl2561Gain_t gain;
+  int write_reg(uint8_t reg, uint8_t data);
+  int read_reg(uint8_t reg, uint16_t *data);
 public:
-  TSL2561(char addr);
+  TSL2561(uint8_t addr);
   ~TSL2561();
   int init();
+  int enable();
+  int disable();
+  int set_gain(tsl2561Gain_t gain);
+  int set_timing(tsl2561IntegrationTime_t integration);
+  int get_full_luminosity(uint32_t *result);
+  int get_luminosity(uint8_t channel, uint16_t *result);
+  //
 };
 
 #endif
