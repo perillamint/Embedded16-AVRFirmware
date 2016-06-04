@@ -301,6 +301,7 @@ int TSL2561::get_raw_luminosity(uint8_t channel, uint16_t *result)
   return 0;
 }
 
+//Returns visible light luminosity in SI Lux unit.
 int TSL2561::get_luminosity(uint32_t *result)
 {
   int ret;
