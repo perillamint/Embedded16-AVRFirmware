@@ -155,22 +155,23 @@ int i2c_write(void *buf, int len)
 
 int i2c_read(void *buf, int len)
 {
-  for(int i = 0; i < len; i++)
+  for(int i = 0; i <= len; i++)
     {
-      TWCR = _BV(TWINT) | _BV(TWEN) | ((len - 1 != i) ? _BV(TWEA) : 0);
+      TWCR = _BV(TWINT) | _BV(TWEN) | ((len != i) ? _BV(TWEA) : 0);
       loop_until_bit_is_set(TWCR, TWINT);
-      ((char*)buf)[i] = TWDR;
+      if(i != len)
+        ((char*)buf)[i] = TWDR;
 
       switch(TWSR)
         {
         case 0x50: //Data byte has been received; ACK returned.
-          if(len - 1 == i) //No no no! It must be NACK!
+          if(len == i) //No no no! It must be NACK!
             {
               return -EIO;
             }
           break;
         case 0x58: //Data byte has been received; NACK returned.
-          if(len - 1 != i) //No no no! It must be ACK!
+          if(len != i) //No no no! It must be ACK!
             {
               return -EIO;
             }
