@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
   int msec_to_ticks(int msec);
+  void atom_delay_ms(int msec);
 
 #ifdef __cplusplus
 }
