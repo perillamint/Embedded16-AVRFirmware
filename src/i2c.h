@@ -10,8 +10,8 @@ extern "C" {
   int i2c_init(uint32_t clock_freq);
   int i2c_start(char sla, bool w);
   void i2c_stop(void);
-  void i2c_write(char data);
-  char i2c_read(bool with_ack);
+  int i2c_write(char data);
+  int i2c_read(void *buf, int len);
 
 #ifdef __cplusplus
 }

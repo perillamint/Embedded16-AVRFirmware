@@ -88,7 +88,7 @@ int i2c_start(char sla, bool w)
           return 0;
         case 0x48: //SLA+R has been transmitted; NACK received.
           return -EADDRNOTAVAIL;
-        default:   //Unknown case. Maybe I/O error.
+        default:   //Unknown case: maybe I/O error.
           return -EIO;
         }
     }
@@ -114,25 +114,49 @@ void i2c_stop(void)
   TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN);
 }
 
-void i2c_write(char data)
+int i2c_write(char data)
 {
   TWDR = data;
   TWCR = _BV(TWINT) | _BV(TWEN);
   loop_until_bit_is_set(TWCR, TWINT);
+
+  switch(TWSR)
+    {
+    case 0x28: //Data byte has been transmitted; ACK received.
+      return 0;
+    case 0x30: //Data byte has been transmitted; NACK received.
+      return -EBADR;
+    default:   //Unknown case: maybe I/O error.
+      return -EIO;
+    }
 }
 
-char i2c_read(bool with_ack)
+int i2c_read(void *buf, int len)
 {
-  char retval = 0;
-  
-  if(atomMutexGet(&i2c_mutex, 0) == ATOM_OK)
+  for(int i = 0; i < len; i++)
     {
-      TWCR = _BV(TWINT) | _BV(TWEN) | (with_ack ? _BV(TWEA) : 0);
+      TWCR = _BV(TWINT) | _BV(TWEN) | (len - 1 == i ? _BV(TWEA) : 0);
       loop_until_bit_is_set(TWCR, TWINT);
+      ((char*)buf)[i] = TWDR;
 
-      retval = TWDR;
-      atomMutexPut(&i2c_mutex);
+      switch(TWSR)
+        {
+        case 0x50: //Data byte has been received; ACK returned.
+          if(len - 1 == i) //No no no! It must be NACK!
+            {
+              return -EIO;
+            }
+          break;
+        case 0x58: //Data byte has been received; NACK returned.
+          if(len - 1 != i) //No no no! It must be ACK!
+            {
+              return -EIO;
+            }
+          break;
+        default:   //Unknown case: maybe I/O error.
+          return -EIO;
+        }
     }
 
-  return retval;
+  return len;
 }
