@@ -13,7 +13,14 @@
 #include "system_tick.h"
 #include "constants.h"
 #include "uart.h"
+#include "i2c.h"
 #include "util.h"
+
+#include "tsl2561.hpp"
+#include "sensordrv.hpp"
+#include "spidrv.hpp"
+
+#include "dumpcode.h"
 
 /* Local data */
 
@@ -26,10 +33,6 @@ static uint8_t main_thread_stack[MAIN_STACK_SIZE_BYTES];
 /* Idle thread's stack area */
 static uint8_t idle_thread_stack[IDLE_STACK_SIZE_BYTES];
 
-/* STDIO stream */
-//static FILE uart_stdout = FDEV_SETUP_STREAM(uart_putchar, NULL, _FDEV_SETUP_WRITE);
-
-
 /* Forward declarations */
 static void main_thread_func (uint32_t data);
 
@@ -41,6 +44,9 @@ int main()
       //Uh-oh.
       //TODO: Blink ERROR LED.
     }
+
+  //Initialize I2C. SCK freq = 400kHz.
+  i2c_init(400000);
 
   //Initialize RTOS.
   int8_t status;
@@ -76,17 +82,24 @@ int main()
 
 static void main_thread_func(uint32_t data)
 {
-  //Hello, loop!
+  printf_P(PSTR("I2C TEST!\n"));
 
-  DDRB = 0xFF;
-  PORTB = 0x00;
+  int ret = -1;
 
-  int cnt = 0;
+  TSL2561 tsl2561(0x39);
+  Sensordrv sensordrv;
+  SPIdrv spidrv;
+
+  ret = sensordrv.init();
+  ret = sensordrv.start_thread();
+  printf_P(PSTR("thread ret = %d\n"), ret);
+
+  ret = spidrv.init();
+  ret = spidrv.start_thread();
+  printf_P(PSTR("thread ret = %d\n"), ret);  
+
   for(;;)
     {
-      cnt++;
-      PORTB ^= 0xFF;
-      printf_P(PSTR("Hello, thread! count = %d\n"), cnt);
-      atomTimerDelay(msec_to_ticks(500));
+      atom_delay_ms(1000);
     }
 }
