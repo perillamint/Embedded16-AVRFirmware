@@ -9,7 +9,7 @@
 #include "tsl2561.hpp"
 #endif
 
-#define SENSORDRV_STACK_SIZE_BYTES 512
+#define SENSORDRV_STACK_SIZE_BYTES 256
 
 class Sensordrv
 {
