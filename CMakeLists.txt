@@ -50,6 +50,7 @@ message(STATUS "Set CMAKE_SYSTEM_INCLUDE_PATH to ${CMAKE_SYSTEM_INCLUDE_PATH}")
 message(STATUS "Set CMAKE_SYSTEM_LIBRARY_PATH to ${CMAKE_SYSTEM_LIBRARY_PATH}")
 
 set(CMAKE_C_FLAGS "-std=gnu99")
+set(CMAKE_CXX_FLAGS "-std=gnu++11")
 
 # Build type C(XX)FLAGS setter. Code from https://github.com/mkleemann/cmake-avr/blob/master/example/CMakeLists.txt#L102
 if(CMAKE_BUILD_TYPE MATCHES Release)
