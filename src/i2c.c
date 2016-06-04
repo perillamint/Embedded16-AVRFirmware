@@ -115,22 +115,38 @@ void i2c_stop(void)
   TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN);
 }
 
+int i2c_putchar(char data)
+{
+  TWDR = data;
+  TWCR = _BV(TWINT) | _BV(TWEN);
+  loop_until_bit_is_set(TWCR, TWINT);
+
+  switch(TWSR)
+    {
+    case 0x28: //Data byte has been transmitted; ACK received.
+      return 0;
+    case 0x30: //Data byte has been transmitted; NACK received.
+      return 1;
+    default:   //Unknown case: maybe I/O error.
+      return -EIO;
+    }
+}
+
 int i2c_write(void *buf, int len)
 {
+  int ret;
   for(int i = 0; i < len; i++)
     {
-      TWDR = ((char*)buf)[i];
-      TWCR = _BV(TWINT) | _BV(TWEN);
-      loop_until_bit_is_set(TWCR, TWINT);
+      ret = i2c_putchar(((char*)buf)[i]);
 
-      switch(TWSR)
+      switch(ret)
         {
-        case 0x28: //Data byte has been transmitted; ACK received.
+        case 0:
           break;
-        case 0x30: //Data byte has been transmitted; NACK received.
+        case 1:
           return i + 1;
-        default:   //Unknown case: maybe I/O error.
-          return -EIO;
+        default:
+          return ret;
         }
     }
 
