@@ -109,7 +109,12 @@ int i2c_start(char sla, bool w)
 void i2c_stop(void)
 {
   //Release mutex.
-  atomMutexPut(&i2c_mutex);
+  int cnt = i2c_mutex.count;
+
+  for(int i = 0; i < cnt; i++)
+    {
+      atomMutexPut(&i2c_mutex);
+    }
   i2c_started = false;
 
   TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN);
