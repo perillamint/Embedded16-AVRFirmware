@@ -5,9 +5,11 @@ set(AVR_PROGRAMMER arduino)
 set(AVR_UPLOADTOOL_PORT /dev/ttyACM0)
 
 # Ardu/Genuino Uno values. NEED TO BE SET TO CORRESPONDING VALUE OF OUR BOARD.
-set(AVR_MCU atmega328p)
-set(AVR_H_FUSE 0xde)
-set(AVR_L_FUSE 0xff)
+#set(AVR_MCU atmega328p)
+#set(AVR_MCU atmega644p)
+set(AVR_MCU atmega128)
+set(AVR_H_FUSE 0x10)
+set(AVR_L_FUSE 0xef)
 
 project(iPot-AVRBRD)
 
@@ -47,6 +49,8 @@ message(STATUS "Set CMAKE_FIND_ROOT_PATH to ${CMAKE_FIND_ROOT_PATH}")
 message(STATUS "Set CMAKE_SYSTEM_INCLUDE_PATH to ${CMAKE_SYSTEM_INCLUDE_PATH}")
 message(STATUS "Set CMAKE_SYSTEM_LIBRARY_PATH to ${CMAKE_SYSTEM_LIBRARY_PATH}")
 
+set(CMAKE_C_FLAGS "-std=gnu99")
+
 # Build type C(XX)FLAGS setter. Code from https://github.com/mkleemann/cmake-avr/blob/master/example/CMakeLists.txt#L102
 if(CMAKE_BUILD_TYPE MATCHES Release)
    set(CMAKE_C_FLAGS_RELEASE "-Os")
@@ -74,10 +78,6 @@ add_definitions("-funsigned-char")
 add_definitions("-funsigned-bitfields")
 add_definitions("-ffunction-sections")
 add_definitions("-c")
-#add_definitions("-std=gnu99")
-
-# TODO: Complete libatomthreads.
-# include_directories(libatomthreads)
 
 add_subdirectory(libatomthreads)
 add_subdirectory(src)
