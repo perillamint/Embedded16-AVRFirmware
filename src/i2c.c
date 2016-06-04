@@ -12,6 +12,7 @@
 //I2C semaphore
 static ATOM_MUTEX i2c_mutex;
 
+static bool i2c_started = false;
 
 int i2c_init(uint32_t clock_freq)
 {
@@ -32,7 +33,6 @@ int i2c_init(uint32_t clock_freq)
 
 int i2c_start(char sla, bool w)
 {
-  static bool i2c_started = false;
   uint8_t mutex_result = 0;
 
   //Lock mutex
@@ -110,32 +110,38 @@ void i2c_stop(void)
 {
   //Release mutex.
   atomMutexPut(&i2c_mutex);
+  i2c_started = false;
 
   TWCR = _BV(TWINT) | _BV(TWSTO) | _BV(TWEN);
 }
 
-int i2c_write(char data)
+int i2c_write(void *buf, int len)
 {
-  TWDR = data;
-  TWCR = _BV(TWINT) | _BV(TWEN);
-  loop_until_bit_is_set(TWCR, TWINT);
-
-  switch(TWSR)
+  for(int i = 0; i < len; i++)
     {
-    case 0x28: //Data byte has been transmitted; ACK received.
-      return 0;
-    case 0x30: //Data byte has been transmitted; NACK received.
-      return -EBADR;
-    default:   //Unknown case: maybe I/O error.
-      return -EIO;
+      TWDR = ((char*)buf)[i];
+      TWCR = _BV(TWINT) | _BV(TWEN);
+      loop_until_bit_is_set(TWCR, TWINT);
+
+      switch(TWSR)
+        {
+        case 0x28: //Data byte has been transmitted; ACK received.
+          break;
+        case 0x30: //Data byte has been transmitted; NACK received.
+          return i + 1;
+        default:   //Unknown case: maybe I/O error.
+          return -EIO;
+        }
     }
+
+  return len;
 }
 
 int i2c_read(void *buf, int len)
 {
   for(int i = 0; i < len; i++)
     {
-      TWCR = _BV(TWINT) | _BV(TWEN) | (len - 1 == i ? _BV(TWEA) : 0);
+      TWCR = _BV(TWINT) | _BV(TWEN) | ((len - 1 != i) ? _BV(TWEA) : 0);
       loop_until_bit_is_set(TWCR, TWINT);
       ((char*)buf)[i] = TWDR;
 
