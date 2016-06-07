@@ -13,12 +13,14 @@
 #include "i2c.h"
 #include "errno.h"
 #include "tsl2561.hpp"
+#include "eth01d.hpp"
 
 #include "sensordrv.hpp"
 
 static bool is_running = false;
 static uint8_t thread_stack[SENSORDRV_STACK_SIZE_BYTES];
 static TSL2561 tsl2561(0x39);
+static ETH01D eth01d;
 
 Sensordrv::Sensordrv()
 {
@@ -32,6 +34,7 @@ void Sensordrv::thread_func(uint32_t data)
 {
   int ret;
   uint32_t res;
+  int16_t humid, temp;
   int cnt = 0;
 
   for(;;)
@@ -39,6 +42,8 @@ void Sensordrv::thread_func(uint32_t data)
       cnt ++;
       ret = tsl2561.get_luminosity(&res);
       printf_P(PSTR("tsl2561.get_luminosity() returned %d, res = %lu, cnt = %d\n"), ret, res, cnt);
+      ret = eth01d.get_calculated_data(&humid, &temp);
+      printf_P(PSTR("eth01d.get_calculated_data() returned %d, humid = %d, temp = %d\n"), ret, humid, temp);
       atom_delay_ms(500);
     }
 }
