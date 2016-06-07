@@ -16,7 +16,6 @@
 #include "i2c.h"
 #include "util.h"
 
-#include "tsl2561.hpp"
 #include "sensordrv.hpp"
 #include "spidrv.hpp"
 
@@ -82,11 +81,10 @@ int main()
 
 static void main_thread_func(uint32_t data)
 {
-  printf_P(PSTR("I2C TEST!\n"));
+  printf_P(PSTR("Thread TEST!\n"));
 
   int ret = -1;
 
-  TSL2561 tsl2561(0x39);
   Sensordrv sensordrv;
   SPIdrv spidrv;
 
@@ -96,7 +94,7 @@ static void main_thread_func(uint32_t data)
 
   ret = spidrv.init();
   ret = spidrv.start_thread();
-  printf_P(PSTR("thread ret = %d\n"), ret);  
+  printf_P(PSTR("thread ret = %d\n"), ret);
 
   for(;;)
     {
