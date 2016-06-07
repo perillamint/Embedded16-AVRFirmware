@@ -1,8 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include <avr/pgmspace.h>
-
 #include "i2c.h"
 #include "util.h"
 #include "errno.h"
@@ -59,10 +57,6 @@ int ETH01D::get_raw_data(uint16_t *humid, uint16_t *temp)
   *temp |= read[3];
   *temp |= 0xF6;
 
-  dumpcode(read, 4);
-  dumpcode((unsigned char*)humid, 2);
-  dumpcode((unsigned char*)temp, 2);
-
   return 0;
 }
 
@@ -85,7 +79,6 @@ int ETH01D::get_calculated_data(int16_t *humid, int16_t *temp)
   *humid = (uint16_t) tmp;
 
   tmp = temp_raw;
-  printf_P(PSTR("raw tmp = %lu\n"), tmp);
   tmp *= 1650;     //165 * 10
   tmp /= 4;        //See ETH01D datasheet.
   tmp /= 0x3FFF;   //(2^14 - 1)
