@@ -6,10 +6,10 @@ set(AVR_UPLOADTOOL_PORT /dev/ttyACM0)
 
 # Ardu/Genuino Uno values. NEED TO BE SET TO CORRESPONDING VALUE OF OUR BOARD.
 #set(AVR_MCU atmega328p)
-#set(AVR_MCU atmega644p)
-set(AVR_MCU atmega128)
-set(AVR_H_FUSE 0x10)
-set(AVR_L_FUSE 0xef)
+set(AVR_MCU atmega644p)
+#set(AVR_MCU atmega128)
+set(AVR_H_FUSE 0xe6)
+set(AVR_L_FUSE 0x11)
 
 project(iPot-AVRBRD)
 
@@ -22,7 +22,7 @@ message(STATUS "Current H_FUSE is set to: ${AVR_H_FUSE}")
 message(STATUS "Current L_FUSE is set to: ${AVR_L_FUSE}")
 
 # Ardu/Genuino Uno values. NEED TO BE SET TO CORRESPONDING VALUE OF OUR BOARD.
-set(MCU_SPEED "16000000UL")
+set(MCU_SPEED "10000000UL")
 
 # Find AVR ROOT_PATH. Code from https://github.com/mkleemann/cmake-avr/blob/master/example/CMakeLists.txt#L72
 if(DEFINED ENV{AVR_FIND_ROOT_PATH})
