@@ -17,6 +17,7 @@
 #include "util.h"
 
 #include "sensordrv.hpp"
+#include "outputdrv.hpp"
 #include "spidrv.hpp"
 
 #include "dumpcode.h"
@@ -38,7 +39,8 @@ static void main_thread_func (uint32_t data);
 int main()
 {
   //Initialize UART.
-  if (uart_init(115200) != 0)
+  //115200bps is not available with 10MHz XTAL. 
+  if (uart_init(57600) != 0)
     {
       //Uh-oh.
       //TODO: Blink ERROR LED.
@@ -86,11 +88,15 @@ static void main_thread_func(uint32_t data)
   int ret = -1;
 
   Sensordrv sensordrv;
+  Outputdrv outputdrv;
   SPIdrv spidrv;
 
   ret = sensordrv.init();
   ret = sensordrv.start_thread();
   printf_P(PSTR("thread ret = %d\n"), ret);
+
+  ret = outputdrv.init();
+  ret = outputdrv.set_light(true);
 
   ret = spidrv.init();
   ret = spidrv.start_thread();
