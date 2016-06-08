@@ -9,6 +9,7 @@
 #define PWM_TIMER_TCCRB TCCR1B
 #define PWM_TIMER_OCR_MOT1 OCR1B
 #define PWM_TIMER_OCR_MOT2 OCR1A
+#define PWM_TIMER_BITSIZE 16
 
 #define PWM_OUTPUT_PIN_MASK _BV(4) | _BV(5)
 #define PWM_OUTPUT_PORT_DDR DDRD
@@ -35,6 +36,7 @@ public:
   ~L298();
   int init(uint32_t freq);
   int set_motor_dir(uint8_t motor, motor_dir_t dir);
+  int set_motor_speed(uint8_t motor, uint8_t duty);
 };
 
 #endif
