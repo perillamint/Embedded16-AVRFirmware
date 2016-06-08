@@ -11,11 +11,13 @@
 #include "util.h"
 #include "errno.h"
 #include "usbpwr.hpp"
+#include "l298.hpp"
 #include "outputdrv.hpp"
 
 #include "dumpcode.h"
 
 static USBPWR usbpwr;
+static L298 l298;
 
 Outputdrv::Outputdrv()
 {
@@ -31,6 +33,10 @@ int Outputdrv::init()
 {
   usbpwr.init();
   usbpwr.set_pwr(0, true); //Turn on RasPi.
+
+  l298.init(10);
+  l298.set_motor_dir(0, MOT_STOP);
+  l298.set_motor_dir(1, MOT_STOP);
   return 0;
 }
 
