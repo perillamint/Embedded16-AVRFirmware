@@ -37,7 +37,7 @@ int USBPWR::set_pwr(uint8_t portno, bool pwren)
         }
       else
         {
-          USB_PWR_PORT &= !(_BV(USB_PWR0_PIN));
+          USB_PWR_PORT &= ~(_BV(USB_PWR0_PIN));
         }
       break;
     case 1:
@@ -47,7 +47,7 @@ int USBPWR::set_pwr(uint8_t portno, bool pwren)
         }
       else
         {
-          USB_PWR_PORT &= !(_BV(USB_PWR1_PIN));
+          USB_PWR_PORT &= ~(_BV(USB_PWR1_PIN));
         }
       break;
     default:
