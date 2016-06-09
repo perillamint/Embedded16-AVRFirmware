@@ -16,9 +16,10 @@ void printchar(unsigned char c)
     printf_P(PSTR("."));
 }
 
-void dumpcode(unsigned char *buff, int len)
+void dumpcode(void *buff_raw, int len)
 {
   int i;
+  unsigned char *buff = (unsigned char*) buff_raw;
   printf_P(PSTR("----------BEGIN DUMP----------\n"));
    
   for(i=0;i<len;i++)

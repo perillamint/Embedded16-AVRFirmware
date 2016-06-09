@@ -4,7 +4,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-  void dumpcode(unsigned char *buff, int len);
+  void dumpcode(void *buff_raw, int len);
 #ifdef __cplusplus
 }
 #endif
