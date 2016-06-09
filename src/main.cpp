@@ -87,9 +87,13 @@ static void main_thread_func(uint32_t data)
 
   int ret = -1;
 
+  SPIdrv spidrv;
   Sensordrv sensordrv;
   Outputdrv outputdrv;
-  SPIdrv spidrv;
+
+  ret = spidrv.init();
+  ret = spidrv.start_thread();
+  printf_P(PSTR("thread ret = %d\n"), ret);
 
   ret = sensordrv.init();
   ret = sensordrv.start_thread();
@@ -98,12 +102,12 @@ static void main_thread_func(uint32_t data)
   ret = outputdrv.init();
   ret = outputdrv.set_light(true);
 
-  ret = spidrv.init();
-  ret = spidrv.start_thread();
-  printf_P(PSTR("thread ret = %d\n"), ret);
+  spimemdata_t *spi_mem = spidrv.get_spi_mem();
 
+  //TODO: Debug shell here.
   for(;;)
     {
-      atom_delay_ms(1000);
+      atom_delay_ms(500);
+      dumpcode((unsigned char*)spi_mem, MAX_SPIMEM_SIZE);
     }
 }
