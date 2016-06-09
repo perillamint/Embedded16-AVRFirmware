@@ -19,6 +19,7 @@
 #include "sensordrv.hpp"
 #include "outputdrv.hpp"
 #include "spidrv.hpp"
+#include "debugshell.hpp"
 
 #include "dumpcode.h"
 
@@ -90,6 +91,7 @@ static void main_thread_func(uint32_t data)
   SPIdrv spidrv;
   Sensordrv sensordrv;
   Outputdrv outputdrv;
+  DebugShell debugshell;
 
   ret = spidrv.init();
   ret = spidrv.start_thread();
@@ -102,12 +104,15 @@ static void main_thread_func(uint32_t data)
   ret = outputdrv.init();
   ret = outputdrv.set_light(true);
 
-  spimemdata_t *spi_mem = spidrv.get_spi_mem();
+  debugshell.init();
+
+  //spimemdata_t *spi_mem = spidrv.get_spi_mem();
 
   //TODO: Debug shell here.
   for(;;)
     {
-      atom_delay_ms(500);
-      dumpcode((unsigned char*)spi_mem, MAX_SPIMEM_SIZE);
+      debugshell.do_repl();
+      atom_delay_ms(10);
+      //dumpcode((unsigned char*)spi_mem, MAX_SPIMEM_SIZE);
     }
 }
