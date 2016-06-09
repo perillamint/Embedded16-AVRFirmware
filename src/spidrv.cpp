@@ -16,6 +16,7 @@
 
 static bool is_running = false;
 static uint8_t thread_stack[SPIDRV_STACK_SIZE_BYTES];
+static spimemdata_t spi_mem[MAX_SPIMEM_SIZE];
 
 SPIdrv::SPIdrv()
 {
@@ -65,4 +66,53 @@ int SPIdrv::start_thread()
     {
       return atom_err_to_errno(status);
     }
+}
+
+spimemdata_t *SPIdrv::get_spi_mem()
+{
+  return spi_mem;
+}
+
+int SPIdrv::write_memory(spimmap_t addr, uint16_t value)
+{
+  if(addr >= MAX_SPIMEM_SIZE)
+    {
+      return -EFAULT;
+    }
+
+  spi_mem[addr].uint16 = value;
+  return 0;
+}
+
+int SPIdrv::write_memory(spimmap_t addr, int16_t value)
+{
+  if(addr >= MAX_SPIMEM_SIZE)
+    {
+      return -EFAULT;
+    }
+
+  spi_mem[addr].int16 = value;
+  return 0;
+}
+
+int SPIdrv::read_memory(spimmap_t addr, uint16_t *value)
+{
+  if(addr >= MAX_SPIMEM_SIZE)
+    {
+      return -EFAULT;
+    }
+
+  *value = spi_mem[addr].uint16;
+  return 0;
+}
+
+int SPIdrv::read_memory(spimmap_t addr, int16_t *value)
+{
+  if(addr >= MAX_SPIMEM_SIZE)
+    {
+      return -EFAULT;
+    }
+
+  *value = spi_mem[addr].int16;
+  return 0;
 }
