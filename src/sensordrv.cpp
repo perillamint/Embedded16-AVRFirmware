@@ -82,7 +82,10 @@ int Sensordrv::init()
     }
 
   ret = tsl2561.enable();
-  printf_P(PSTR("tsl2561.enable() returned %d\n"), ret);
+  if(ret < 0)
+    {
+      printf_P(PSTR("tsl2561.enable() returned %d\n"), ret);
+    }
 
   //Initialize sensor args.
   ret = tsl2561.set_gain(TSL2561_GAIN_1X);
