@@ -39,7 +39,9 @@ void Outputdrv::thread_func(uint32_t data)
   uint16_t pump_time[2] = {0, 0};
   int pump_smalltick[2] = {0, 0};
   bool is_running[2] = {false, false};
+  uint16_t buf;
   static const spimmap_t pump_idx[2] = {PUMP1_TIME, PUMP2_TIME};
+  static const spimmap_t led_map[2] = {LED1_PWR, LED2_PWR};
 
   for(;;)
     {
@@ -86,6 +88,22 @@ void Outputdrv::thread_func(uint32_t data)
             }
         }
 
+      for(int i = 0; i < 2; i++)
+        {
+          spidrv.read_memory(led_map[i], &buf);
+
+          buf &= 0x0001;
+
+          if(buf)
+            {
+              usbpwr.set_pwr(i, true);
+            }
+          else
+            {
+              usbpwr.set_pwr(i, false);
+            }
+        }
+
       atom_delay_ms(1000); //Sleep 1sec.
     }
 }
@@ -118,8 +136,7 @@ int Outputdrv::start_thread()
   status = atomThreadCreate(&(this -> tcb), DEFAULT_THREAD_PRIO - 1,
                             this -> thread_func, 0,
                             thread_stack,
-                            SPIDRV_STACK_SIZE_BYTES, TRUE);
-
+                            OUTDRV_STACK_SIZE_BYTES, TRUE);
   if(ATOM_OK == status)
     {
       is_running = true;
@@ -129,6 +146,8 @@ int Outputdrv::start_thread()
     {
       return atom_err_to_errno(status);
     }
+
+  return 0;
 }
 
 int Outputdrv::set_light(bool light)

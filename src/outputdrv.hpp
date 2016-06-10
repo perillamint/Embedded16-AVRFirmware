@@ -5,7 +5,7 @@
 #error Outputdrv class requires C++.
 #endif
 
-#define OUTDRV_STACK_SIZE_BYTES 256
+#define OUTDRV_STACK_SIZE_BYTES 128
 
 class Outputdrv
 {
