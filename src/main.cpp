@@ -67,7 +67,8 @@ int main()
       // Enable system timer.
       init_system_tick();
 
-      status = atomThreadCreate(&main_tcb, DEFAULT_THREAD_PRIO,
+      //Create main (and debug thread) with low priority (10 less then others)
+      status = atomThreadCreate(&main_tcb, DEFAULT_THREAD_PRIO + 10,
                                 main_thread_func, 0,
                                 &main_thread_stack[0],
                                 MAIN_STACK_SIZE_BYTES, TRUE);
