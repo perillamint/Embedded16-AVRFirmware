@@ -56,7 +56,8 @@
 /*
  * Semaphore for single-threaded access to UART device
  */
-static ATOM_MUTEX uart_mutex;
+static ATOM_MUTEX uart_tx_mutex;
+static ATOM_MUTEX uart_rx_mutex;
 
 //Std(in|out)
 static FILE uart_stdin = FDEV_SETUP_STREAM(NULL, uart_getchar, _FDEV_SETUP_READ);
@@ -83,7 +84,16 @@ int uart_init(uint32_t baudrate)
   DDRD = 0xFE;
 
   /* Create a mutex for single-threaded putchar() access */
-  if (atomMutexCreate (&uart_mutex) != ATOM_OK)
+  if (atomMutexCreate (&uart_tx_mutex) != ATOM_OK)
+    {
+      status = -1;
+    }
+  else
+    {
+      status = 0;
+    }
+
+  if (atomMutexCreate (&uart_rx_mutex) != ATOM_OK)
     {
       status = -1;
     }
@@ -107,7 +117,7 @@ int uart_putchar(char c, FILE *stream)
 {
 
   /* Block on private access to the UART */
-  if (atomMutexGet(&uart_mutex, 0) == ATOM_OK)
+  if (atomMutexGet(&uart_tx_mutex, 0) == ATOM_OK)
     {
       /* Convert \n to \r\n */
       if (c == '\n')
@@ -118,7 +128,7 @@ int uart_putchar(char c, FILE *stream)
       REG_UDR = c;
 
       /* Return mutex access */
-      atomMutexPut(&uart_mutex);
+      atomMutexPut(&uart_tx_mutex);
     }
 
   return 0;
@@ -130,12 +140,12 @@ int uart_getchar(FILE *stream)
 {
   char ret = 0;
 
-  if (atomMutexGet(&uart_mutex, 0) == ATOM_OK)
+  loop_until_bit_is_set(REG_UCSRA, RXC0);
+  if (atomMutexGet(&uart_rx_mutex, 0) == ATOM_OK)
     {
-      loop_until_bit_is_set(REG_UCSRA, RXC0);
       ret = REG_UDR;
 
-      atomMutexPut(&uart_mutex);
+      atomMutexPut(&uart_rx_mutex);
     }
 
   return ret;
