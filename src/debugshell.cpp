@@ -145,7 +145,7 @@ int DebugShell::cmd_help()
 int DebugShell::cmd_spidump()
 {
   printf_P(PSTR("SPI shm dump:\n"));
-  dumpcode(spidrv.get_spi_mem(), MAX_SPIMEM_SIZE);
+  dumpcode(spidrv.get_spi_mem(), MAX_SPIMEM_SIZE * 2);
 
   return 0;
 }
