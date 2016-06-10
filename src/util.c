@@ -8,7 +8,11 @@
 
 int msec_to_ticks(int msec)
 {
-  return (uint32_t)msec * SYSTICKS_PER_SEC / 1000;
+  int32_t ret = msec;
+  ret *= SYSTICKS_PER_SEC;
+  ret /= 1000;
+
+  return ret;
 }
 
 void atom_delay_ms(int msec)
