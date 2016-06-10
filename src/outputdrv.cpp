@@ -96,12 +96,13 @@ int Outputdrv::init()
   usbpwr.set_pwr(0, true); //Turn on RasPi.
 
   l298.init(10);
-  /*
-  l298.set_motor_speed(0, 255);
-  l298.set_motor_speed(1, 255);
-  l298.set_motor_dir(0, MOT_FORWARD);
-  l298.set_motor_dir(1, MOT_FORWARD);
-  */
+
+  for(int i = 0; i < 2; i++)
+    {
+      l298.set_motor_speed(i, 0);
+      l298.set_motor_dir(i, MOT_STOP);
+    }
+
   return 0;
 }
 
