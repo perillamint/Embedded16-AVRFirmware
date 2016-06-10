@@ -31,7 +31,6 @@ SPIdrv::~SPIdrv()
 void SPIdrv::thread_func(uint32_t data)
 {
   //TODO: SPI stuff
-  printf_P(PSTR("TODO: Put SPI stuff here.\n"));
   for(;;)
     {
       atom_delay_ms(1000);
