@@ -18,7 +18,8 @@ typedef enum spimmap
     WATER_LEVEL  = 0x05,
     PUMP1_TIME   = 0x06,
     PUMP2_TIME   = 0x07,
-    LED_PWR      = 0x08
+    LED1_PWR     = 0x08,
+    LED2_PWR     = 0x09
   } spimmap_t;
 
 typedef union spimemdata
