@@ -106,6 +106,11 @@ static void main_thread_func(uint32_t data)
     }
 
   ret = outputdrv.init();
+  ret = outputdrv.start_thread();
+  if(ret < 0)
+    {
+      printf_P(PSTR("thread ret = %d\n"), ret);
+    }
   ret = outputdrv.set_light(true);
 
   printf_P(PSTR("\n"));
