@@ -22,6 +22,27 @@ typedef enum spimmap
     LED2_PWR     = 0x09
   } spimmap_t;
 
+typedef enum spidid
+  {
+    SYSTEM_ALIVE          = 0x00,
+    WATER_TANK_LEVEL      = 0x01,
+    SAUCER_TANK_LEVEL     = 0x02,
+    AIR_SENSOR_AVAIL      = 0x10,
+    AIR_HUMIDITY          = 0x11,
+    AIR_TEMPERATURE       = 0x12,
+    SOIL_SENSOR_AVAIL     = 0x20,
+    SOIL_HUMIDITY         = 0x21,
+    OTHER_SENS_AVAIL      = 0x30,
+    LIGHT_INTENSITY       = 0x31,
+    SYSTEM_TICK           = 0x80,
+    AIR_MOTIVATOR_AVAIL   = 0x90,
+    WATER_SPRAY_MOTOR     = 0x91,
+    SOIL_MOTIVATOR_AVAIL  = 0xA0,
+    WATER_PUMP_MOTOR      = 0xA1,
+    OTHER_MOTIVATOR_AVAIL = 0xB0,
+    LAMP                  = 0xB1
+  } spidid_t;
+
 typedef union spimemdata
 {
   uint16_t uint16;

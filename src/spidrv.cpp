@@ -45,8 +45,30 @@ void SPIdrv::thread_func(uint32_t data)
   //TODO: SPI stuff
   for(;;)
     {
-      //printf_P(PSTR("Hello, SPI!\n"));
-      atom_delay_ms(1000);
+      while(!spi_rx_flag) //Delay until we get spi flag.
+        {
+          atom_delay_ms(10);
+        }
+
+      printf_P(PSTR("SPI RX done!, buf = 0x%X 0x%X 0x%X 0x%X\n"),
+               spi_rx_buf[0], spi_rx_buf[1], spi_rx_buf[2], spi_rx_buf[3]);
+
+      spi_rx_flag = false;
+
+      //TODO: Set TX flag.
+      spi_tx_buf[0] = 'A';
+      spi_tx_buf[1] = 'B';
+      spi_tx_buf[2] = 'C';
+      spi_tx_buf[3] = 'D';
+
+      spi_tx_flag = true;
+
+      while(spi_tx_flag)
+        {
+          atom_delay_ms(10);
+        }
+
+      printf_P(PSTR("SPI TX done!\n"));
     }
 }
 
@@ -162,8 +184,6 @@ ISR (SPI_STC_vect)
 
   if(idx >= 4)
     {
-      printf_P(PSTR("SPI mode switch! stat = %d, buf = 0x%X 0x%X 0x%X 0x%X\n"),
-               status, spi_rx_buf[0], spi_rx_buf[1], spi_rx_buf[2], spi_rx_buf[3]);
       idx = 0;
 
       switch(status)
