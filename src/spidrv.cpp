@@ -113,6 +113,15 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
   switch(rx_packet -> did)
     {
     case SYSTEM_ALIVE:
+      if(0 == rx_packet -> write)
+        {
+          tx_packet -> data = 0x0000;
+        }
+      else
+        {
+          printf_P(PSTR("RESET!\n"));
+          do_reset();
+        }
       break;
     case WATER_TANK_LEVEL:
       break;
