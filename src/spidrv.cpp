@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <avr/pgmspace.h>
 #include <avr/io.h>
@@ -13,6 +14,8 @@
 #include "errno.h"
 
 #include "spidrv.hpp"
+
+#include "dumpcode.h"
 
 static bool is_running = false;
 static uint8_t thread_stack[SPIDRV_STACK_SIZE_BYTES];
@@ -42,7 +45,8 @@ SPIdrv::~SPIdrv()
 
 void SPIdrv::thread_func(uint32_t data)
 {
-  //TODO: SPI stuff
+  spi_packet_t spi_rx_packet, spi_tx_packet;
+
   for(;;)
     {
       while(!spi_rx_flag) //Delay until we get spi flag.
@@ -50,16 +54,31 @@ void SPIdrv::thread_func(uint32_t data)
           atom_delay_ms(10);
         }
 
-      printf_P(PSTR("SPI RX done!, buf = 0x%X 0x%X 0x%X 0x%X\n"),
-               spi_rx_buf[0], spi_rx_buf[1], spi_rx_buf[2], spi_rx_buf[3]);
+      memcpy(&spi_rx_packet, spi_rx_buf, sizeof(spi_packet_t));
 
       spi_rx_flag = false;
 
-      //TODO: Set TX flag.
-      spi_tx_buf[0] = 'A';
-      spi_tx_buf[1] = 'B';
-      spi_tx_buf[2] = 'C';
-      spi_tx_buf[3] = 'D';
+      dumpcode(&spi_rx_packet, sizeof(spi_packet_t));
+
+      printf_P(PSTR("SPI RX done!, version = %d, write = %d, reserved = %d, parity = %d\n"
+                    "rid = 0x%X, did = 0x%X, data = 0x%X\n"),
+               spi_rx_packet.version, spi_rx_packet.write, spi_rx_packet.reserved,
+               spi_rx_packet.parity, spi_rx_packet.rid, spi_rx_packet.did, spi_rx_packet.data);
+
+      //TODO: Query data from memory.
+      //TODO: Do checksum.
+
+      spi_tx_packet.version = 0;  // Must be zero.
+      spi_tx_packet.write = true; // OK flag here.
+      spi_tx_packet.reserved = 0; // Must be zero.
+
+      spi_tx_packet.rid = spi_rx_packet.rid;
+      spi_tx_packet.did = spi_rx_packet.did;
+
+      spi_tx_packet.data = 42;
+
+      memcpy(spi_tx_buf, &spi_tx_packet, sizeof(spi_packet_t));
+      dumpcode(&spi_tx_packet, sizeof(spi_packet_t));
 
       spi_tx_flag = true;
 

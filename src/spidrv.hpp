@@ -49,6 +49,17 @@ typedef union spimemdata
   int16_t int16;
 } spimemdata_t;
 
+typedef struct spi_packet
+{
+  uint8_t   rid      :4; // 5-8th bit.
+  bool      parity   :1; // 4th bit.
+  bool      reserved :1; // 3th bit.
+  bool      write    :1; // 2nd bit.
+  bool      version  :1; // 1st bit. (MSB)
+  uint8_t   did      :8;
+  uint16_t  data     :16;
+} __attribute__ ((__packed__)) spi_packet_t;
+
 class SPIdrv
 {
 private:
