@@ -3,8 +3,19 @@
 #include <atom.h>
 #include <atomtimer.h>
 
+#include <avr/wdt.h>
+
 #include "constants.h"
 #include "util.h"
+
+void wdt_init(void) __attribute__((naked)) __attribute__((section(".init3")));
+
+void wdt_init(void)
+{
+  MCUSR = 0x00;
+  wdt_disable();
+  return;
+}
 
 int msec_to_ticks(int msec)
 {
@@ -62,4 +73,10 @@ bool do_parity(void* data, int size, bool odd)
     {
       return !(pop % 2 == 0);
     }
+}
+
+void do_reset()
+{
+  wdt_enable(WDTO_15MS);
+  for(;;);
 }

@@ -12,6 +12,7 @@ extern "C" {
   int atom_err_to_errno(uint8_t status);
   int popcount(uint64_t x);
   bool do_parity(void* data, int size, bool odd);
+  void do_reset();
 
 #ifdef __cplusplus
 }
