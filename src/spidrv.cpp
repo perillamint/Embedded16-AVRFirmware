@@ -56,7 +56,6 @@ void SPIdrv::thread_func(uint32_t data)
         }
 
       memcpy(&spi_rx_packet, spi_rx_buf, sizeof(spi_packet_t));
-
       spi_rx_flag = false;
 
       dumpcode(&spi_rx_packet, sizeof(spi_packet_t));
@@ -68,7 +67,7 @@ void SPIdrv::thread_func(uint32_t data)
 
       parity = do_parity(spi_tx_buf, 4, true);
 
-      if(!spi_rx_packet.parity) //Faulty!
+      if(!parity) //Faulty!
         {
           printf_P(PSTR("Bad parity!\n"));
           spi_tx_packet.write = false;
@@ -188,6 +187,7 @@ ISR (SPI_STC_vect)
 {
   static int idx = 0;
   static int status = 0; // 0 = rx, 1 = tx.
+  static bool tx_start = false;
   char buf;
 
   switch(status)
@@ -196,8 +196,9 @@ ISR (SPI_STC_vect)
       buf = SPDR;
       SPDR = 0x00;
 
-      if(0x00 != buf)
+      if(0x00 != buf || tx_start)
         {
+          tx_start = true;
           spi_rx_buf[idx] = buf;
           idx ++;
         }
@@ -225,6 +226,7 @@ ISR (SPI_STC_vect)
         {
         case 0:
           spi_rx_flag = true;
+          tx_start = false;
           break;
         case 1:
           spi_tx_flag = false;
