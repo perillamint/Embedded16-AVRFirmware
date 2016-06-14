@@ -109,6 +109,7 @@ void SPIdrv::thread_func(uint32_t data)
 
 int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
 {
+  spimmap_t idx;
   switch(rx_packet -> did)
     {
     case SYSTEM_ALIVE:
@@ -162,19 +163,18 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
       //TODO: Other stuff.
     case WATER_SPRAY_MOTOR:
     case WATER_PUMP_MOTOR:
-      spimmap_t motidx;
       if(WATER_SPRAY_MOTOR == rx_packet -> did)
         {
-          motidx = PUMP1_TIME;
+          idx = PUMP1_TIME;
         }
       else
         {
-          motidx = PUMP2_TIME;
+          idx = PUMP2_TIME;
         }
 
       if(1 == rx_packet -> write)
         {
-          if(spi_mem[motidx].uint16 & 0x8000)
+          if(spi_mem[idx].uint16 & 0x8000)
             {
               return -EBUSY;
             }
@@ -184,15 +184,40 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
               return -EINVAL;
             }
 
-          spi_mem[motidx].uint16 = rx_packet -> data;
+          spi_mem[idx].uint16 = rx_packet -> data;
           tx_packet -> data = 0x0000;
           return 0;
         }
       else
         {
-          tx_packet -> data = spi_mem[motidx].uint16;
+          tx_packet -> data = spi_mem[idx].uint16;
           return 0;
         }
+    case OTHER_MOTIVATOR_AVAIL:
+      return 0;
+      break;
+    case LAMP_PRIMARY:
+    case LAMP_SECONDARY:
+      if(LAMP_PRIMARY == rx_packet -> did)
+        {
+          idx = LED1_PWR;
+        }
+      else
+        {
+          idx = LED2_PWR;
+        }
+
+      if(1 == rx_packet -> write)
+        {
+          spi_mem[idx].uint16 = rx_packet -> data;
+          return 0;
+        }
+      else
+        {
+          tx_packet -> data = spi_mem[idx].uint16;
+          return 0;
+        }
+      break;
     default:
       tx_packet -> data = 0x0000;
       return -EADDRNOTAVAIL;
