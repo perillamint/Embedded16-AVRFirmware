@@ -226,6 +226,11 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
               value >>= 1;
             }
 
+          if(value)
+            {
+              value = 0xFFFF;
+            }
+
           tx_packet -> data = value;
           return 0;
         }
