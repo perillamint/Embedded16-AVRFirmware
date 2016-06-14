@@ -59,10 +59,8 @@ void SPIdrv::thread_func(uint32_t data)
       memcpy(&spi_rx_packet, spi_rx_buf, sizeof(spi_packet_t));
       spi_rx_flag = false;
 
-      dumpcode(&spi_rx_packet, sizeof(spi_packet_t));
-
-      printf_P(PSTR("SPI RX done!, version = %d, write = %d, reserved = %d, parity = %d\n"
-                    "rid = 0x%X, did = 0x%X, data = 0x%X\n"),
+      printf_P(PSTR("SPI packet received!, version = %d, write = %d, reserved = %d\n"
+                    "parity = %d, rid = 0x%X, did = 0x%X, data = 0x%X\n"),
                spi_rx_packet.version, spi_rx_packet.write, spi_rx_packet.reserved,
                spi_rx_packet.parity, spi_rx_packet.rid, spi_rx_packet.did, spi_rx_packet.data);
 
@@ -124,8 +122,28 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
         }
       break;
     case WATER_TANK_LEVEL:
-      break;
     case SAUCER_TANK_LEVEL:
+      if(0 == rx_packet -> write)
+        {
+          uint16_t value = spi_mem[WATER_LEVEL].uint16;
+
+          if(WATER_TANK_LEVEL == rx_packet -> did)
+            {
+              value &= 0x0001;
+            }
+          else
+            {
+              value &= 0x0002;
+              value >>= 1;
+            }
+
+          tx_packet -> data = value;
+          return 0;
+        }
+      else
+        {
+          return -EPERM;
+        }
       break;
     case AIR_SENSOR_AVAIL:
       break;
