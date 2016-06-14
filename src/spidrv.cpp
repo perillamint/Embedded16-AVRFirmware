@@ -146,6 +146,17 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
         }
       break;
     case AIR_SENSOR_AVAIL:
+      if(0 == rx_packet -> write)
+        {
+          //Hardcode. two sensors available.
+          tx_packet -> data = 0x0003;
+
+          return 0;
+        }
+      else
+        {
+          return -EPERM;
+        }
       break;
     case AIR_HUMIDITY:
       if(0 == rx_packet -> write)
@@ -171,8 +182,20 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
         }
       break;
     case SOIL_SENSOR_AVAIL:
+      if(0 == rx_packet -> write)
+        {
+          //Hardcode. not yet implemented.
+          tx_packet -> data = 0x0000;
+
+          return 0;
+        }
+      else
+        {
+          return -EPERM;
+        }
       break;
     case SOIL_HUMIDITY:
+      //TODO: Impl.
       break;
     case OTHER_SENS_AVAIL:
       break;
