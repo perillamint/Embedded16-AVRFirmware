@@ -158,13 +158,20 @@ ISR (SPI_STC_vect)
 {
   static int idx = 0;
   static int status = 0; // 0 = rx, 1 = tx.
+  char buf;
 
   switch(status)
     {
     case 0: //RX
-      spi_rx_buf[idx] = SPDR;
+      buf = SPDR;
       SPDR = 0x00;
-      idx ++;
+
+      if(0x00 != buf)
+        {
+          spi_rx_buf[idx] = buf;
+          idx ++;
+        }
+
       break;
     case 1:
       if(spi_tx_flag)
@@ -184,8 +191,6 @@ ISR (SPI_STC_vect)
 
   if(idx >= 4)
     {
-      idx = 0;
-
       switch(status)
         {
         case 0:
@@ -195,9 +200,11 @@ ISR (SPI_STC_vect)
           spi_tx_flag = false;
           break;
         default:
+          printf_P(PSTR("Uh-oh, it shouldn't be here! DEBUG UR SPI_STC_vect.\n"));
           break;
         }
 
       status = (status + 1) % 2;
+      idx = 0;
     }
 }
