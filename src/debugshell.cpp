@@ -9,6 +9,8 @@
 #include "spidrv.hpp"
 #include "debugshell.hpp"
 
+#include "util.h"
+
 #include "dumpcode.h"
 
 static char buf[MAX_CMD_BUF_SIZE];
@@ -118,6 +120,10 @@ int DebugShell::eval_cmd()
     {
       cmd_setmem();
     }
+  else if(strncmp(cmdbuf[0], "reset", MAX_CMD_BUF_SIZE) == 0)
+    {
+      cmd_reset();
+    }
   else
     {
       printf_P(PSTR("Command not found: %s\n"), buf);
@@ -133,6 +139,7 @@ int DebugShell::cmd_help()
   printf_P(PSTR("spidump - dump SPI shm using dumpcode()\n"));
   printf_P(PSTR("dumpmem [hex addr] [dec size] - dump values at given address.\n"));
   printf_P(PSTR("setmem  [hex addr] [hex value] - set memory at given address with given value.\n"));
+  printf_P(PSTR("reset - reset system using watchdog timer.\n"));
   printf_P(PSTR("\n"));
 
   printf_P(PSTR("WARN!! WARN!! WARN!!\n"));
@@ -254,6 +261,13 @@ int DebugShell::cmd_setmem()
       return -1;
     }
 
+  return 0;
+}
+
+int DebugShell::cmd_reset()
+{
+  printf_P(PSTR("Resetting system using WDT...\n"));
+  do_reset();
   return 0;
 }
 

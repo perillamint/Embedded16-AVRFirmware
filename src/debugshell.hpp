@@ -17,6 +17,7 @@ private:
   int cmd_spidump();
   int cmd_dumpmem();
   int cmd_setmem();
+  int cmd_reset();
 public:
   DebugShell();
   ~DebugShell();
