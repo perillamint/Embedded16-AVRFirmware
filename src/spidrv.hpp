@@ -25,8 +25,6 @@ typedef enum spimmap
 typedef enum spidid
   {
     SYSTEM_ALIVE          = 0x00,
-    WATER_TANK_LEVEL      = 0x01,
-    SAUCER_TANK_LEVEL     = 0x02,
     AIR_SENSOR_AVAIL      = 0x10,
     AIR_HUMIDITY          = 0x11,
     AIR_TEMPERATURE       = 0x12,
@@ -34,6 +32,9 @@ typedef enum spidid
     SOIL_HUMIDITY         = 0x21,
     OTHER_SENS_AVAIL      = 0x30,
     LIGHT_INTENSITY       = 0x31,
+    WATER_SENS_AVAIL      = 0x40,
+    WATER_TANK_LEVEL      = 0x41,
+    SAUCER_TANK_LEVEL     = 0x42,
     SYSTEM_TICK           = 0x80,
     AIR_MOTIVATOR_AVAIL   = 0x90,
     WATER_SPRAY_MOTOR     = 0x91,
