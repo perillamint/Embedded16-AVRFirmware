@@ -65,18 +65,18 @@ void SPIdrv::thread_func(uint32_t data)
                spi_rx_packet.version, spi_rx_packet.write, spi_rx_packet.reserved,
                spi_rx_packet.parity, spi_rx_packet.rid, spi_rx_packet.did, spi_rx_packet.data);
 
-      parity = do_parity(spi_tx_buf, 4, true);
+      parity = do_parity(spi_rx_buf, 4, true);
 
-      if(!parity) //Faulty!
+      if(parity) //Faulty!
         {
           printf_P(PSTR("Bad parity!\n"));
-          spi_tx_packet.write = false;
+          spi_tx_packet.write = 1;
           spi_tx_packet.data = EINVAL;
         }
       else //Okay.
         {
           //TODO: Query data from memory.
-          spi_tx_packet.write = true; // OK flag here.
+          spi_tx_packet.write = 0; // OK flag here.
           spi_tx_packet.data = 42;
         }
 
