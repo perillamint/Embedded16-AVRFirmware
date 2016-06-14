@@ -65,6 +65,7 @@ class SPIdrv
 private:
   ATOM_TCB tcb;
   static void thread_func(uint32_t data);
+  static int do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet);
 public:
   SPIdrv();
   ~SPIdrv();

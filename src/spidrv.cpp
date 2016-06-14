@@ -47,6 +47,7 @@ void SPIdrv::thread_func(uint32_t data)
 {
   spi_packet_t spi_rx_packet, spi_tx_packet;
   bool parity;
+  int ret;
 
   for(;;)
     {
@@ -75,9 +76,14 @@ void SPIdrv::thread_func(uint32_t data)
         }
       else //Okay.
         {
-          //TODO: Query data from memory.
           spi_tx_packet.write = 0; // OK flag here.
-          spi_tx_packet.data = 42;
+          ret = do_command(&spi_rx_packet, &spi_tx_packet);
+
+          if(ret < 0)
+            {
+              spi_tx_packet.write = 1;
+              spi_tx_packet.data = -ret;
+            }
         }
 
       spi_tx_packet.version = 0;  // Must be zero.
@@ -99,6 +105,90 @@ void SPIdrv::thread_func(uint32_t data)
 
       printf_P(PSTR("SPI TX done!\n"));
     }
+}
+
+int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
+{
+  switch(rx_packet -> did)
+    {
+    case SYSTEM_ALIVE:
+      break;
+    case WATER_TANK_LEVEL:
+      break;
+    case SAUCER_TANK_LEVEL:
+      break;
+    case AIR_SENSOR_AVAIL:
+      break;
+    case AIR_HUMIDITY:
+      if(0 == rx_packet -> write)
+        {
+          tx_packet -> data = spi_mem[HUMID_AIR].uint16;
+          return 0;
+        }
+      else
+        {
+          return -EPERM;
+        }
+      return 0;
+      break;
+    case AIR_TEMPERATURE:
+      if(0 == rx_packet -> write)
+        {
+          tx_packet -> data = spi_mem[THERMAL_AIR].uint16;
+          return 0;
+        }
+      else
+        {
+          return -EPERM;
+        }
+      break;
+    case SOIL_SENSOR_AVAIL:
+      break;
+    case SOIL_HUMIDITY:
+      break;
+    case OTHER_SENS_AVAIL:
+      break;
+    case LIGHT_INTENSITY:
+      if(0 == rx_packet -> write)
+        {
+          tx_packet -> data = spi_mem[LUMINOSITY].uint16;
+          return 0;
+        }
+      else
+        {
+          return -EPERM;
+        }
+      break;
+      //TODO: Other stuff.
+    case WATER_SPRAY_MOTOR:
+    case WATER_PUMP_MOTOR:
+      spimmap_t motidx;
+      if(WATER_SPRAY_MOTOR == rx_packet -> did)
+        {
+          motidx = PUMP1_TIME;
+        }
+      else
+        {
+          motidx = PUMP2_TIME;
+        }
+
+      if(1 == rx_packet -> write)
+        {
+          //TODO: Check busy flag.
+          spi_mem[motidx].uint16 = rx_packet -> data;
+          tx_packet -> data = rx_packet -> data;
+          return 0;
+        }
+      else
+        {
+          tx_packet -> data = spi_mem[motidx].uint16;
+          return 0;
+        }
+    default:
+      tx_packet -> data = 0x0000;
+      return -1;
+    }
+  return 0;
 }
 
 int SPIdrv::init()
