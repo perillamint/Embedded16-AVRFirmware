@@ -40,7 +40,8 @@ typedef enum spidid
     SOIL_MOTIVATOR_AVAIL  = 0xA0,
     WATER_PUMP_MOTOR      = 0xA1,
     OTHER_MOTIVATOR_AVAIL = 0xB0,
-    LAMP                  = 0xB1
+    LAMP_PRIMARY          = 0xB1,
+    LAMP_SECONDARY        = 0xB2
   } spidid_t;
 
 typedef union spimemdata
