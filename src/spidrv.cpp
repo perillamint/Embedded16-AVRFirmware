@@ -121,30 +121,6 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
           do_reset();
         }
       break;
-    case WATER_TANK_LEVEL:
-    case SAUCER_TANK_LEVEL:
-      if(0 == rx_packet -> write)
-        {
-          uint16_t value = spi_mem[WATER_LEVEL].uint16;
-
-          if(WATER_TANK_LEVEL == rx_packet -> did)
-            {
-              value &= 0x0001;
-            }
-          else
-            {
-              value &= 0x0002;
-              value >>= 1;
-            }
-
-          tx_packet -> data = value;
-          return 0;
-        }
-      else
-        {
-          return -EPERM;
-        }
-      break;
     case AIR_SENSOR_AVAIL:
       if(0 == rx_packet -> write)
         {
@@ -198,6 +174,17 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
       //TODO: Impl.
       break;
     case OTHER_SENS_AVAIL:
+      if(0 == rx_packet -> write)
+        {
+          //Hardcode. one sensor is available.
+          tx_packet -> data = 0x0001;
+
+          return 0;
+        }
+      else
+        {
+          return -EPERM;
+        }
       break;
     case LIGHT_INTENSITY:
       if(0 == rx_packet -> write)
@@ -210,7 +197,45 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
           return -EPERM;
         }
       break;
-      //TODO: Other stuff.
+    case WATER_SENS_AVAIL:
+      if(0 == rx_packet -> write)
+        {
+          //Hardcode. two sensors are available.
+          tx_packet -> data = 0x0003;
+
+          return 0;
+        }
+      else
+        {
+          return -EPERM;
+        }
+      break;
+    case WATER_TANK_LEVEL:
+    case SAUCER_TANK_LEVEL:
+      if(0 == rx_packet -> write)
+        {
+          uint16_t value = spi_mem[WATER_LEVEL].uint16;
+
+          if(WATER_TANK_LEVEL == rx_packet -> did)
+            {
+              value &= 0x0001;
+            }
+          else
+            {
+              value &= 0x0002;
+              value >>= 1;
+            }
+
+          tx_packet -> data = value;
+          return 0;
+        }
+      else
+        {
+          return -EPERM;
+        }
+      break;
+    case SYSTEM_TICK:
+      break;
     case WATER_SPRAY_MOTOR:
     case WATER_PUMP_MOTOR:
       if(WATER_SPRAY_MOTOR == rx_packet -> did)
