@@ -174,9 +174,18 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
 
       if(1 == rx_packet -> write)
         {
-          //TODO: Check busy flag.
+          if(spi_mem[motidx].uint16 & 0x8000)
+            {
+              return -EBUSY;
+            }
+
+          if(rx_packet -> data & 0x8000)
+            {
+              return -EINVAL;
+            }
+
           spi_mem[motidx].uint16 = rx_packet -> data;
-          tx_packet -> data = rx_packet -> data;
+          tx_packet -> data = 0x0000;
           return 0;
         }
       else
@@ -186,7 +195,7 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
         }
     default:
       tx_packet -> data = 0x0000;
-      return -1;
+      return -EADDRNOTAVAIL;
     }
   return 0;
 }
