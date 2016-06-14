@@ -14,7 +14,7 @@
  * In this case, the idle stack is allocated on the BSS via the
  * idle_thread_stack[] byte array.
  */
-#define IDLE_STACK_SIZE_BYTES       128
+#define IDLE_STACK_SIZE_BYTES       256
 
 
 /*
@@ -40,7 +40,7 @@
  * future as the codebase changes but for the time being is enough to
  * cope with all of the automated tests.
  */
-#define MAIN_STACK_SIZE_BYTES       204
+#define MAIN_STACK_SIZE_BYTES       256
 
 //Default priority
 #define DEFAULT_THREAD_PRIO 16
