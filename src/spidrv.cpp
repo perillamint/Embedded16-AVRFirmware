@@ -1,4 +1,4 @@
-#include <stdint.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -160,9 +160,8 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
     case SOIL_SENSOR_AVAIL:
       if(0 == rx_packet -> write)
         {
-          //Hardcode. not yet implemented.
-          tx_packet -> data = 0x0000;
-
+          //Hardcode. One SHT10 available.
+          tx_packet -> data = 0x0001;
           return 0;
         }
       else
@@ -171,7 +170,15 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
         }
       break;
     case SOIL_HUMIDITY:
-      //TODO: Impl.
+      if(0 == rx_packet -> write)
+        {
+          tx_packet -> data = spi_mem[HUMID_SOIL].uint16;
+          return 0;
+        }
+      else
+        {
+          return -EPERM;
+        }
       break;
     case LIGHT_SENS_AVAIL:
       if(0 == rx_packet -> write)
