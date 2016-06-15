@@ -173,11 +173,13 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
     case SOIL_HUMIDITY:
       //TODO: Impl.
       break;
-    case OTHER_SENS_AVAIL:
+    case LIGHT_SENS_AVAIL:
       if(0 == rx_packet -> write)
         {
           //Hardcode. one sensor is available.
-          tx_packet -> data = 0x0001;
+          //Uh-oh. we burnt our light sensor during dev.
+          //Disable it now...
+          tx_packet -> data = 0x0000;
 
           return 0;
         }
