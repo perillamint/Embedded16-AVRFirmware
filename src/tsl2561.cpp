@@ -335,6 +335,7 @@ int TSL2561::get_luminosity(uint32_t *result)
   uint32_t raw_luminosity;
 
   ret = get_raw_full_luminosity(&raw_luminosity);
+
   if(ret < 0)
     {
       return ret;
