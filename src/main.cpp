@@ -92,12 +92,19 @@ static void main_thread_func(uint32_t data)
   Outputdrv outputdrv;
   DebugShell debugshell;
 
+  printf_P(PSTR("System booted.\n"));
+
+  printf_P(PSTR("Initializing SPI...\n"));
+
   ret = spidrv.init();
   ret = spidrv.start_thread();
   if(ret < 0)
     {
       printf_P(PSTR("thread ret = %d\n"), ret);
     }
+
+  printf_P(PSTR("SPI initialized.\n"));
+  printf_P(PSTR("Initializing Sensor driver...\n"));
 
   ret = sensordrv.init();
   ret = sensordrv.start_thread();
@@ -106,6 +113,9 @@ static void main_thread_func(uint32_t data)
       printf_P(PSTR("thread ret = %d\n"), ret);
     }
 
+  printf_P(PSTR("Sensor driver initialized.\n"));
+  printf_P(PSTR("Initializing output driver...\n"));
+
   ret = outputdrv.init();
   ret = outputdrv.start_thread();
   if(ret < 0)
@@ -113,6 +123,8 @@ static void main_thread_func(uint32_t data)
       printf_P(PSTR("thread ret = %d\n"), ret);
     }
   ret = outputdrv.set_light(true);
+
+  printf_P(PSTR("Output driver initialized.\n"));
 
   printf_P(PSTR("\n"));
   debugshell.init();
