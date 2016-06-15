@@ -29,10 +29,10 @@ int WaterSensor::get_data(uint16_t *water_tank)
   *water_tank = 0x0000;
 
   tmp = WSENS_PORT & _BV(WATER_SENS_1);
-  *water_tank |= tmp?0x00:0x01;
+  *water_tank |= tmp?0x01:0x00;
 
   tmp = WSENS_PORT & _BV(WATER_SENS_2);
-  *water_tank |= tmp?0x00:0x02;
+  *water_tank |= tmp?0x02:0x00;
 
   return 0;
 }
