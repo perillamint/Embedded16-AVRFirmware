@@ -15,6 +15,7 @@
 #include "spidrv.hpp"
 #include "tsl2561.hpp"
 #include "eth01d.hpp"
+#include "watersens.hpp"
 
 #include "sensordrv.hpp"
 
@@ -23,6 +24,7 @@ static uint8_t thread_stack[SENSORDRV_STACK_SIZE_BYTES];
 static TSL2561 tsl2561(0x39);
 static ETH01D eth01d;
 static SPIdrv spidrv;
+static WaterSensor watersensor;
 
 Sensordrv::Sensordrv()
 {
@@ -36,6 +38,7 @@ void Sensordrv::thread_func(uint32_t data)
 {
   int ret;
   uint32_t res;
+  uint16_t water_tank;
   int16_t humid, temp;
   int cnt = 0;
 
@@ -62,30 +65,48 @@ void Sensordrv::thread_func(uint32_t data)
           spidrv.write_memory(THERMAL_AIR, temp);
           spidrv.write_memory(HUMID_AIR, humid);
         }
+
+      ret = watersensor.get_data(&water_tank);
+      if(ret < 0)
+        {
+          printf_P(PSTR("watersensor.get_data() returned %d\n"), ret);
+        }
+      else
+        {
+          spidrv.write_memory(WATER_LEVEL, water_tank);
+        }
+
       atom_delay_ms(500);
     }
 }
 
 int Sensordrv::init()
 {
-  int ret = -1;
+  int ret;
 
-  while (ret >= 0)
+  do
     {
       ret = tsl2561.init();
-      printf_P(PSTR("tsl2561.init() returned %d\n"), ret);
+
       if(ret < 0)
         {
           printf_P(PSTR("TSL2561 init failure. try it again after 1msec.\n"));
           atom_delay_ms(1);
         }
     }
+  while (ret < 0);
 
-  ret = tsl2561.enable();
-  if(ret < 0)
+  do
     {
-      printf_P(PSTR("tsl2561.enable() returned %d\n"), ret);
+      ret = tsl2561.enable();
+
+      if(ret < 0)
+        {
+          printf_P(PSTR("tsl2561.enable() returned %d\n"), ret);
+          printf_P(PSTR("Trying again...\n"));
+        }
     }
+  while (ret < 0);
 
   //Initialize sensor args.
   ret = tsl2561.set_gain(TSL2561_GAIN_1X);
@@ -99,6 +120,9 @@ int Sensordrv::init()
     {
       printf("ERR! no timing!\n");
     }
+
+  watersensor.init();
+
   return 0;
 }
 
