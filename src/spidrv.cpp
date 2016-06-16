@@ -125,7 +125,7 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
       if(0 == rx_packet -> write)
         {
           //Hardcode. two sensors available.
-          tx_packet -> data = 0x0003;
+          tx_packet -> data = 0x0006;
 
           return 0;
         }
@@ -161,7 +161,7 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
       if(0 == rx_packet -> write)
         {
           //Hardcode. One SHT10 available.
-          tx_packet -> data = 0x0001;
+          tx_packet -> data = 0x0003;
           return 0;
         }
       else
@@ -186,7 +186,7 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
           //Hardcode. one sensor is available.
           //Uh-oh. we burnt our light sensor during dev.
           //Disable it now...
-          tx_packet -> data = 0x0000;
+          tx_packet -> data = 0x0001;
 
           return 0;
         }
@@ -210,7 +210,7 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
       if(0 == rx_packet -> write)
         {
           //Hardcode. two sensors are available.
-          tx_packet -> data = 0x0003;
+          tx_packet -> data = 0x0006;
 
           return 0;
         }
