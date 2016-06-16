@@ -74,13 +74,22 @@ void SPIdrv::thread_func(uint32_t data)
         }
       else //Okay.
         {
-          spi_tx_packet.write = 0; // OK flag here.
-          ret = do_command(&spi_rx_packet, &spi_tx_packet);
-
-          if(ret < 0)
+          //rid shouldn't be 0x00.
+          if(spi_rx_packet.rid == 0)
             {
               spi_tx_packet.write = 1;
-              spi_tx_packet.data = -ret;
+              spi_tx_packet.data = EINVAL;
+            }
+          else
+            {
+              spi_tx_packet.write = 0; // OK flag here.
+              ret = do_command(&spi_rx_packet, &spi_tx_packet);
+
+              if(ret < 0)
+                {
+                  spi_tx_packet.write = 1;
+                  spi_tx_packet.data = -ret;
+                }
             }
         }
 
