@@ -125,7 +125,7 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
       if(0 == rx_packet -> write)
         {
           //Hardcode. two sensors available.
-          tx_packet -> data = 0x0006;
+          tx_packet -> data = 0x0007;
 
           return 0;
         }
@@ -210,7 +210,7 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
       if(0 == rx_packet -> write)
         {
           //Hardcode. two sensors are available.
-          tx_packet -> data = 0x0006;
+          tx_packet -> data = 0x0007;
 
           return 0;
         }
