@@ -15,6 +15,7 @@
 #include "spidrv.hpp"
 #include "tsl2561.hpp"
 #include "eth01d.hpp"
+#include "sht10.hpp"
 #include "watersens.hpp"
 
 #include "sensordrv.hpp"
@@ -24,6 +25,7 @@ static uint8_t thread_stack[SENSORDRV_STACK_SIZE_BYTES];
 static TSL2561 tsl2561(0x39);
 static ETH01D eth01d;
 static SPIdrv spidrv;
+static SHT10 sht10;
 static WaterSensor watersensor;
 
 Sensordrv::Sensordrv()
@@ -76,6 +78,26 @@ void Sensordrv::thread_func(uint32_t data)
           spidrv.write_memory(WATER_LEVEL, water_tank);
         }
 
+      ret = sht10.get_calculated_data(TEMP, &temp);
+      if(ret < 0)
+        {
+          printf_P(PSTR("sht10.get_calculated_data() returned %d\n"), ret);
+        }
+      else
+        {
+          spidrv.write_memory(THERMAL_SOIL, temp);
+        }
+
+      ret = sht10.get_calculated_data(HUMID, &humid);
+      if(ret < 0)
+        {
+          printf_P(PSTR("sht10.get_calculated_data() returned %d\n"), ret);
+        }
+      else
+        {
+          spidrv.write_memory(HUMID_SOIL, humid);
+        }
+
       atom_delay_ms(500);
     }
 }
@@ -107,6 +129,12 @@ int Sensordrv::init()
         }
     }
   while (ret < 0);
+
+  ret = sht10.init();
+  if(ret < 0)
+    {
+      printf(PSTR("ERR! soil sensor init failure!\n"));
+    }
 
   //Initialize sensor args.
   ret = tsl2561.set_gain(TSL2561_GAIN_1X);
