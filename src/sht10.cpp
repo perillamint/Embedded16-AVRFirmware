@@ -262,14 +262,14 @@ int SHT10::get_raw_data(sht10_type_t type, uint16_t *raw_data)
 
 int SHT10::get_calculated_data(sht10_type_t type, int16_t *data)
 {
-  static const float c1 = -4.0;
-  static const float c2 = 0.0405;
-  static const float c3 = -0.0000028;
-  static const float d1 = -39.6;
-  static const float d2 = 0.01;
+  static const double c1 = -4.0;
+  static const double c2 = 0.0405;
+  static const double c3 = -0.0000028;
+  static const double d1 = -39.6;
+  static const double d2 = 0.01;
 
   uint16_t buf;
-  float calcbuf = 0.0;
+  double calcbuf = 0.0;
 
   get_raw_data(type, &buf);
 
@@ -277,7 +277,7 @@ int SHT10::get_calculated_data(sht10_type_t type, int16_t *data)
     {
     case TEMP:
       calcbuf += d1;
-      calcbuf += d2 * ((float)buf);
+      calcbuf += d2 * ((double)buf);
       calcbuf *= 10;
       if(calcbuf > 1000)
         {
@@ -288,8 +288,8 @@ int SHT10::get_calculated_data(sht10_type_t type, int16_t *data)
       break;
     case HUMID:
       calcbuf += c1;
-      calcbuf += c2 * ((float)buf);
-      calcbuf += c3 * (((float)buf) * ((float)buf));
+      calcbuf += c2 * ((double)buf);
+      calcbuf += c3 * (((double)buf) * ((double)buf));
       calcbuf *= 10;
       *data = (int16_t)calcbuf;
       break;

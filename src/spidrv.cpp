@@ -135,7 +135,6 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
         {
           //Hardcode. two sensors available.
           tx_packet -> data = 0x0007;
-
           return 0;
         }
       else
@@ -144,21 +143,21 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
         }
       break;
     case AIR_HUMIDITY:
-      if(0 == rx_packet -> write)
-        {
-          tx_packet -> data = spi_mem[HUMID_AIR].uint16;
-          return 0;
-        }
-      else
-        {
-          return -EPERM;
-        }
-      return 0;
-      break;
     case AIR_TEMPERATURE:
       if(0 == rx_packet -> write)
         {
-          tx_packet -> data = spi_mem[THERMAL_AIR].uint16;
+          switch(rx_packet -> did)
+            {
+            case AIR_HUMIDITY:
+              tx_packet -> data = spi_mem[HUMID_AIR].uint16;
+              break;
+            case AIR_TEMPERATURE:
+              tx_packet -> data = spi_mem[THERMAL_AIR].uint16;
+              break;
+            default:
+              break;
+            }
+
           return 0;
         }
       else
@@ -170,7 +169,7 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
       if(0 == rx_packet -> write)
         {
           //Hardcode. One SHT10 available.
-          tx_packet -> data = 0x0003;
+          tx_packet -> data = 0x0007;
           return 0;
         }
       else
@@ -179,9 +178,21 @@ int SPIdrv::do_command(spi_packet_t *rx_packet, spi_packet_t *tx_packet)
         }
       break;
     case SOIL_HUMIDITY:
+    case SOIL_TEMPERATURE:
       if(0 == rx_packet -> write)
         {
-          tx_packet -> data = spi_mem[HUMID_SOIL].uint16;
+          switch(rx_packet -> did)
+            {
+            case SOIL_HUMIDITY:
+              tx_packet -> data = spi_mem[HUMID_SOIL].uint16;
+              break;
+            case SOIL_TEMPERATURE:
+              tx_packet -> data = spi_mem[THERMAL_SOIL].uint16;
+              break;
+            default:
+              break;
+            }
+
           return 0;
         }
       else

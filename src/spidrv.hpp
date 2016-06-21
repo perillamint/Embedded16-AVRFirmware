@@ -30,6 +30,7 @@ typedef enum spidid
     AIR_TEMPERATURE       = 0x12,
     SOIL_SENSOR_AVAIL     = 0x20,
     SOIL_HUMIDITY         = 0x21,
+    SOIL_TEMPERATURE      = 0x22,
     LIGHT_SENS_AVAIL      = 0x30,
     LIGHT_INTENSITY       = 0x31,
     WATER_SENS_AVAIL      = 0x40,
